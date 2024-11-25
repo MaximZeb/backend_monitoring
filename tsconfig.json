@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Уровень ECMAScript
+    "module": "CommonJS", // Модульная система Node.js
+    "strict": true, // Включает строгую типизацию
+    "esModuleInterop": true, // Поддержка модулей ES6
+    "skipLibCheck": true, // Пропустить проверку типов в библиотеках
+    "forceConsistentCasingInFileNames": true, // Следить за регистром в именах файлов
+    "outDir": "./dist", // Куда компилировать код
+    "rootDir": "./src" // Где находятся исходные файлы
+  },
+  "include": [
+    "src/**/*.ts"
+  ], // Укажите папку с TypeScript-файлами
+  "exclude": [
+    "node_modules"
+  ] // Исключаем node_modules
+}
