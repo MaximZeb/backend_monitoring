@@ -149,6 +149,10 @@ app.get('/mines/:id', authMiddleware, async (req: any, res: any) => {
   }
 });
 
+//Маршрут для гард защиты
+app.get('/validate', authMiddleware, (req: any, res: any) => {
+  res.status(200).send({ message: 'Token is valid' });
+})
 
 // Маршрут для входа
 app.post('/entry', async (req: any, res: any) => {
