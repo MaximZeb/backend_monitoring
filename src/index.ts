@@ -137,21 +137,22 @@ const authMiddleware = (req: any, res: any, next: any) => {
 app.get('/mines/:id', authMiddleware, async (req: any, res: any) => {
   try {
     const { id } = req.params;
-    console.log('ID, полученный в запросе:', id); // Логируем ID
     
     const mine = await Mine.findOne({_id: id});
-    console.log('Результат поиска:', mine); // Логируем результат запроса
 
-    if (!mine) return res.status(404).json({ message: 'Документ не найден' });
-    res.status(200).json(mine);
+    if (!mine) {
+      return res.status(404).json({data: { message: 'Документ не найден' }})
+    };
+
+    res.status(200).json({data: mine});
   } catch {
-    res.status(500).json({ message: 'Ошибка сервера' });
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
   }
 });
 
 //Маршрут для гард защиты
 app.get('/validate', authMiddleware, (req: any, res: any) => {
-  res.status(200).send({ message: 'Token is valid' });
+  res.status(200).send({data: { message: 'Токен валидный' }});
 })
 
 // Маршрут для входа
