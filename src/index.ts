@@ -83,15 +83,15 @@ app.post('/register', async (req: any, res: any) => {
             maxAge: 3600 * 1000, // 1 час
         });
 
-        res.status(201).json({ 
-            message: 'Пользователь успешно зарегистрирован',
-            name,
-            surname,
-            middleName,
-            position,
-            division,
-            enterpriseId: '679798e11b73903d632233a3',
-         });
+        res.status(201).json({ data: {
+          message: 'Пользователь успешно зарегистрирован',
+          name,
+          surname,
+          middleName,
+          position,
+          division,
+          enterpriseId: '679798e11b73903d632233a3',
+        }});
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Ошибка сервера' });
@@ -188,9 +188,17 @@ app.post('/entry', async (req: any, res: any) => {
         sameSite: 'Lax',  // Использовать secure только в production
         maxAge: 3600000,  // 1 час
     });
-
+      const { name, surname, middleName, position, division } = user;
       // Возвращаем токен
-      res.json({ message: 'Успешный вход',  enterpriseId: '679798e11b73903d632233a3'});
+      res.json({ data: {
+        message: 'Успешный вход',
+        name,
+        surname,
+        middleName,
+        position,
+        division,
+        enterpriseId: '679798e11b73903d632233a3'
+      }});
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Ошибка сервера' });
