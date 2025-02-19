@@ -25,7 +25,7 @@ const User = mongoose.model('User', userSchema);
 
 // Подключаем CORS
 app.use(cors({
-    origin: 'http://localhost:4200', // Разрешаем запросы только с Angular приложения
+    origin: ['http://localhost:4200', 'http://localhost:50777'] , // Разрешаем запросы только с Angular приложения
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Разрешённые методы
     allowedHeaders: ['Content-Type', 'Authorization'], // Разрешённые заголовки
     credentials: true // Разрешаем передачу cookies и других credentials
@@ -118,6 +118,28 @@ const mineSchema = new mongoose.Schema({
 
 const Mine = mongoose.model('Mine', mineSchema);
 
+// Модель для коллекции combine
+const technicsSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  indications: [
+    {
+      time: { type: String, required: true },
+      work_shift: { type: String, required: true },
+      machine_readings: [
+        {
+          name_machine_readings: { type: String, required: true },
+          times_readings: [{ type: String }],
+          readings: [{ type: Number }]
+        },
+      ],
+    },
+  ],
+});
+
+const SamohodniiVagon = mongoose.model('SamohodniiVagon', technicsSchema, 'samohodniiVagon');
+const Bunker = mongoose.model('Bunker', technicsSchema, 'bunker');
+const Combine = mongoose.model('Combine', technicsSchema, 'combine');
+
 // получить шахту
 // Middleware для аутентификации
 const authMiddleware = (req: any, res: any, next: any) => {
@@ -145,6 +167,56 @@ app.get('/mines/:id', authMiddleware, async (req: any, res: any) => {
     };
 
     res.status(200).json({data: mine});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
+});
+
+// Защищённый маршрут для получения данных о combine
+app.get('/combine/:id', async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+
+    const technicsCombine = await Combine.findOne({_id: id});
+    if (!technicsCombine) {
+      return res.status(404).json({data: { message: 'Документ не найден' }})
+    };
+
+    res.status(200).json({data: technicsCombine});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
+});
+
+// Защищённый маршрут для получения данных о samohodniiVagon
+app.get('/samohodniiVagon/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    
+    const technicsSamohodniiVagon = await SamohodniiVagon.findOne({_id: id});
+
+    if (!technicsSamohodniiVagon) {
+      return res.status(404).json({data: { message: 'Документ не найден' }})
+    };
+
+    res.status(200).json({data: technicsSamohodniiVagon});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
+});
+
+// Защищённый маршрут для получения данных о bunker
+app.get('/bunker/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    
+    const technicsBunker = await Bunker.findOne({_id: id});
+
+    if (!technicsBunker) {
+      return res.status(404).json({data: { message: 'Документ не найден' }})
+    };
+
+    res.status(200).json({data: technicsBunker});
   } catch {
     res.status(500).json({data: { message: 'Ошибка сервера' }});
   }
@@ -203,7 +275,7 @@ app.post('/entry', async (req: any, res: any) => {
       console.error(err);
       res.status(500).json({ message: 'Ошибка сервера' });
     }
-  });
+});
 
 // Запускаем сервер
 app.listen(PORT, () => {
