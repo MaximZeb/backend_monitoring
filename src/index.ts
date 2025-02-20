@@ -173,7 +173,7 @@ app.get('/mines/:id', authMiddleware, async (req: any, res: any) => {
 });
 
 // Защищённый маршрут для получения данных о combine
-app.get('/combine/:id', async (req: any, res: any) => {
+app.get('/combine/:id', authMiddleware, async (req: any, res: any) => {
   try {
     const { id } = req.params;
 
