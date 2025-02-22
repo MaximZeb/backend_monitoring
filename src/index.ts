@@ -136,9 +136,23 @@ const technicsSchema = new mongoose.Schema({
   ],
 });
 
+// Модель для коллекции combine
+const workShiftSchema = new mongoose.Schema({
+  time: { type: String, required: true },
+  work_shift: { type: String, required: true },
+  indications: 
+    {
+      name_machine_readings: { type: String, required: true },
+      plan: { type: String, required: true },
+      times_readings: [{ type: String }],
+      readings: [{ type: Number }]
+    },
+});
+
 const SamohodniiVagon = mongoose.model('SamohodniiVagon', technicsSchema, 'samohodniiVagon');
 const Bunker = mongoose.model('Bunker', technicsSchema, 'bunker');
 const Combine = mongoose.model('Combine', technicsSchema, 'combine');
+const Work_shift = mongoose.model('Work_shift', workShiftSchema, 'work_shift');
 
 // получить шахту
 // Middleware для аутентификации
@@ -183,6 +197,22 @@ app.get('/combine/:id', authMiddleware, async (req: any, res: any) => {
     };
 
     res.status(200).json({data: technicsCombine});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
+});
+
+// Защищённый маршрут для получения данных о work_shift
+app.get('/work_shift/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+
+    const WorkShiftCombine = await Work_shift.findOne({_id: id});
+    if (!WorkShiftCombine) {
+      return res.status(404).json({data: { message: 'Документ не найден' }})
+    };
+
+    res.status(200).json({data: WorkShiftCombine});
   } catch {
     res.status(500).json({data: { message: 'Ошибка сервера' }});
   }
