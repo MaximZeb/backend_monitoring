@@ -25,7 +25,7 @@ const User = mongoose.model('User', userSchema);
 
 // Подключаем CORS
 app.use(cors({
-    origin: ['http://localhost:4200', 'http://localhost:50777'] , // Разрешаем запросы только с Angular приложения
+    origin: ['http://localhost:4200', 'http://localhost:50777', 'http://localhost:54772', 'http://localhost:62166/'] , // Разрешаем запросы только с Angular приложения
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Разрешённые методы
     allowedHeaders: ['Content-Type', 'Authorization'], // Разрешённые заголовки
     credentials: true // Разрешаем передачу cookies и других credentials
@@ -136,7 +136,21 @@ const technicsSchema = new mongoose.Schema({
   ],
 });
 
-// Модель для коллекции combine
+// Модель для коллекции month_plan
+const monthPlanSchema = new mongoose.Schema({
+  time: { type: String, required: true },
+  work_shift: { type: String, required: true },
+  indications_month: 
+    {
+      name_machine_readings: { type: String, required: true },
+      plan: { type: String, required: true },
+      times_readings: [{ type: String }],
+      name_month:{ type: String, required: true },
+      readings: [{ type: Number }]
+    }
+});
+
+// Модель для коллекции work_shift
 const workShiftSchema = new mongoose.Schema({
   time: { type: String, required: true },
   work_shift: { type: String, required: true },
@@ -153,6 +167,7 @@ const SamohodniiVagon = mongoose.model('SamohodniiVagon', technicsSchema, 'samoh
 const Bunker = mongoose.model('Bunker', technicsSchema, 'bunker');
 const Combine = mongoose.model('Combine', technicsSchema, 'combine');
 const Work_shift = mongoose.model('Work_shift', workShiftSchema, 'work_shift');
+const Month_plan = mongoose.model('Month_plan', monthPlanSchema, 'month_plan');
 
 // получить шахту
 // Middleware для аутентификации
@@ -213,6 +228,46 @@ app.get('/work_shift/:id', authMiddleware, async (req: any, res: any) => {
     };
 
     res.status(200).json({data: WorkShiftCombine});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
+});
+
+// Защищённый маршрут для получения данных о month_plan
+app.get('/month_plan/:id', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+
+    const MonthPlanCombine = await Month_plan.findOne({_id: id});
+    if (!MonthPlanCombine) {
+      return res.status(404).json({data: { message: 'Документ не найден' }})
+    };
+
+    res.status(200).json({data: MonthPlanCombine});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
+});
+
+// Защищённый маршрут для получения данных о work_shift
+app.get('/work_shift/:date/:workShift', authMiddleware, async (req: any, res: any) => {
+  try {
+    const { date, workShift } = req.params;
+    console.log(date, workShift)
+    if (date === '1' && workShift === '1') {
+      res.status(200).json({
+        data: {
+          combineId: '67b43d4dc4a16ca114d044d9',
+          bunkerId: '67b4aa1359900f39ac5d4b92',
+          samohodniVagonId: '67b4b38c59900f39ac5d4bb5',
+          workShiftId: '67ba01e8a705a2a315725eec',
+          monthPlanId: '67bd92d0ce0049202ac0ba46'
+        }
+      })
+    } else {
+      res.status(200).json({data: { message: 'Документ не найден' }});
+    }
+
   } catch {
     res.status(500).json({data: { message: 'Ошибка сервера' }});
   }
