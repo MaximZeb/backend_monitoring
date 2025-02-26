@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const data = require('../src/mock-real-time');
 
 // Ваш секретный ключ для токенов
 const SECRET_KEY = 'fed12g%4hfd$w3267rdabbjl894!34%&*33D';
@@ -360,6 +361,15 @@ app.post('/entry', async (req: any, res: any) => {
       console.error(err);
       res.status(500).json({ message: 'Ошибка сервера' });
     }
+});
+
+// Защищённый маршрут для получения данных о real_time
+app.get('/real_time', authMiddleware, async (req: any, res: any) => {
+  try {
+    res.status(200).json({data: data.mockIndictions});
+  } catch {
+    res.status(500).json({data: { message: 'Ошибка сервера' }});
+  }
 });
 
 // Запускаем сервер
