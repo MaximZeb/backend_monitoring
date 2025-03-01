@@ -19,16 +19,7 @@ export let mockIndictions: any[] = [
                   "07:00",
                   "08:00"
                 ],
-                readings: [
-                  4,
-                  6,
-                  8,
-                  7,
-                  7,
-                  6,
-                  5,
-                  3
-                ]
+                readings: [4, 6, 8, 7, 7]
               },
               {
                 name_machine_readings: "Акселерометры (вибрация поворотного редуктора планетарно-дискового исполнительного органа), миллиметры в секунду, мм/c",
@@ -107,32 +98,7 @@ export let mockIndictions: any[] = [
                   3,
                   5.5,
                   3.7,
-                  6.2,
-                  4.3,
-                  5,
-                  3.4,
-                  2.6,
-                  5.8,
-                  4,
-                  5.3,
-                  3.2,
-                  6.3,
-                  4.5,
-                  2.9,
-                  5.6,
-                  3.8,
-                  6.1,
-                  4.2,
-                  5.1,
-                  3.1,
-                  4.9,
-                  5.4,
-                  2.7,
-                  3.6,
-                  5.9,
-                  4.1,
-                  3.5,
-                  6
+                  6.2
                 ]
               },
               {
@@ -212,32 +178,7 @@ export let mockIndictions: any[] = [
                   3,
                   5.5,
                   3.7,
-                  6.2,
-                  4.3,
-                  5,
-                  3.4,
-                  2.6,
-                  5.8,
-                  4,
-                  5.3,
-                  3.2,
-                  6.3,
-                  4.5,
-                  2.9,
-                  5.6,
-                  3.8,
-                  6.1,
-                  4.2,
-                  5.1,
-                  3.1,
-                  4.9,
-                  5.4,
-                  2.7,
-                  3.6,
-                  5.9,
-                  4.1,
-                  3.5,
-                  6
+                  6.2
                 ]
               },
               {
@@ -318,31 +259,7 @@ export let mockIndictions: any[] = [
                   5.5,
                   3.7,
                   6.2,
-                  4.3,
-                  5,
-                  3.4,
-                  2.6,
-                  5.8,
-                  4,
-                  5.3,
-                  3.2,
-                  6.3,
-                  4.5,
-                  2.9,
-                  5.6,
-                  3.8,
-                  6.1,
-                  4.2,
-                  5.1,
-                  3.1,
-                  4.9,
-                  5.4,
-                  2.7,
-                  3.6,
-                  5.9,
-                  4.1,
-                  3.5,
-                  6
+                  4.3
                 ]
               },
               {
@@ -363,10 +280,7 @@ export let mockIndictions: any[] = [
                   6,
                   8,
                   7,
-                  7,
-                  6,
-                  5,
-                  3
+                  8
                 ]
               },
               {
@@ -388,10 +302,7 @@ export let mockIndictions: any[] = [
                   0.4,
                   0.42,
                   0.38,
-                  0.33,
-                  0.3,
-                  0.28,
-                  0.25
+                  0.35,
                 ]
               },
               {
@@ -413,10 +324,7 @@ export let mockIndictions: any[] = [
                   85,
                   95,
                   100,
-                  102,
-                  100,
-                  98,
-                  95
+                  110
                 ]
               },
               {
@@ -438,10 +346,7 @@ export let mockIndictions: any[] = [
                   85,
                   95,
                   100,
-                  102,
-                  100,
-                  98,
-                  95
+                  102
                 ]
               }
             ]
@@ -473,11 +378,7 @@ export let mockIndictions: any[] = [
                   362,
                   436,
                   23,
-                  36,
-                  283,
-                  347,
-                  347,
-                  503
+                  36
                 ]
               },
               {
@@ -499,10 +400,7 @@ export let mockIndictions: any[] = [
                   0.4,
                   0.42,
                   0.38,
-                  0.33,
-                  0.3,
-                  0.28,
-                  0.25
+                  0.42,
                 ]
               },
               {
@@ -524,10 +422,7 @@ export let mockIndictions: any[] = [
                   85,
                   95,
                   100,
-                  102,
-                  100,
-                  98,
-                  95
+                  97
                 ]
               }
             ]
@@ -1544,3 +1439,36 @@ export let mockIndictions: any[] = [
         }
     }
 ];
+
+function counterUral(num: number, machine_readings_index: number, randomNum: number = 0.02, checkout: boolean = true, technicIndex: number = 0) {
+  let arr = mockIndictions[technicIndex].indications[0].machine_readings[machine_readings_index].readings;
+  let newNum = num + 1;
+  if (arr.length === num) {
+    checkout ? arr.push(0.01) : arr.push(0)
+  }
+
+  if (arr.length === newNum) {
+    const randomNumber = checkout ?  Math.random() * randomNum : 1;
+    arr[arr.length - 1] += randomNumber;
+
+    arr[arr.length - 1] = Math.round(arr[num] * 100) / 100;
+  }
+
+  mockIndictions[technicIndex].indications[0].machine_readings[machine_readings_index].readings = arr;
+}
+
+setInterval(() => {
+  counterUral(5, 0);
+  counterUral(24, 1);
+  counterUral(24, 2, 0.03);
+  counterUral(24, 3, 0.01);
+  counterUral(5, 0, 0.1, true, 1);
+  // console.log(mockIndictions[0].indications[0].machine_readings[1].readings);
+  // console.log(mockIndictions[0].indications[0].machine_readings[2].readings);
+  console.log(mockIndictions[1].indications[0].machine_readings[0].readings);
+}, 2000)
+
+setInterval(() => {
+  counterUral(5, 4, 1, false);
+  // console.log(mockIndictions[0].indications[0].machine_readings[4].readings);
+}, 100000)
