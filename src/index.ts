@@ -365,7 +365,6 @@ app.post('/entry', async (req: any, res: any) => {
 
 // Защищённый маршрут для получения данных о real_time
 app.get('/real_time', authMiddleware, async (req: any, res: any) => {
-  console.log(data.mockIndictions[0].indications[0].machine_readings[0].readings)
   try {
     res.status(200).json({data: data.mockIndictions});
   } catch {

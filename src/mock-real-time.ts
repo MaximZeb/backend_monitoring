@@ -1299,110 +1299,7 @@ export let mockIndictions: any[] = [
                   12.75,
                   8.5,
                   4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25,
-                  0,
-                  2.83,
-                  5.67,
-                  8.5,
-                  11.33,
-                  14.17,
-                  17,
-                  17,
-                  17,
-                  17,
-                  12.75,
-                  8.5,
-                  4.25
+                  0
                 ]
               }
             ]
@@ -1457,18 +1354,34 @@ function counterUral(num: number, machine_readings_index: number, randomNum: num
   mockIndictions[technicIndex].indications[0].machine_readings[machine_readings_index].readings = arr;
 }
 
+function planWorkShift() {
+  let arr = mockIndictions[3].indications_work_shift.readings;
+  arr[0] = arr[0]-1;
+  arr[1] = arr[1]+1;
+
+  mockIndictions[3].indications_work_shift.readings = arr;
+}
+
+function wesBP() {
+  mockIndictions[2].indications[0].machine_readings[0].readings.push(Math.round((Math.random() * 17) * 100) / 100)
+}
+
 setInterval(() => {
   counterUral(5, 0);
   counterUral(24, 1);
   counterUral(24, 2, 0.03);
   counterUral(24, 3, 0.01);
   counterUral(5, 0, 0.1, true, 1);
+  wesBP();
   // console.log(mockIndictions[0].indications[0].machine_readings[1].readings);
   // console.log(mockIndictions[0].indications[0].machine_readings[2].readings);
-  console.log(mockIndictions[1].indications[0].machine_readings[0].readings);
+  // console.log(mockIndictions[1].indications[0].machine_readings[0].readings);
+  // console.log(mockIndictions[2].indications[0].machine_readings[0].readings);
 }, 2000)
 
 setInterval(() => {
+  planWorkShift();
   counterUral(5, 4, 1, false);
-  // console.log(mockIndictions[0].indications[0].machine_readings[4].readings);
+  wesBP();
+  // console.log(mockIndictions[4].indications[0].machine_readings[0].readings);
 }, 100000)
