@@ -377,7 +377,6 @@ app.post('/predict', (req: any, res: any) => {
 
     const prognoz = nn.getPrediction(inputData);
     const response = { data: { fact: prognoz } };
-    console.log(response);
     res.json(response);
   } catch (error) {
     console.error(error);
