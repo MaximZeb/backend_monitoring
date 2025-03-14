@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const data = require('../src/mock-real-time');
+const nn = require('./neuralNetwork'); // Импортируем функции нейронной сети
 
 // Ваш секретный ключ для токенов
 const SECRET_KEY = 'fed12g%4hfd$w3267rdabbjl894!34%&*33D';
@@ -23,6 +23,9 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+// Загружаем модель при старте сервера
+nn.loadModel();
 
 // Подключаем CORS
 app.use(cors({
@@ -363,14 +366,40 @@ app.post('/entry', async (req: any, res: any) => {
     }
 });
 
-// Защищённый маршрут для получения данных о real_time
-app.get('/real_time', authMiddleware, async (req: any, res: any) => {
+// Эндпоинт для предсказания
+app.post('/predict', (req: any, res: any) => {
   try {
-    res.status(200).json({data: data.mockIndictions});
-  } catch {
-    res.status(500).json({data: { message: 'Ошибка сервера' }});
+    const inputData = req.body;
+
+    if (!inputData || typeof inputData.plan !== 'number') {
+      return res.status(400).json({ error: 'Invalid input data. Need {plan: number}' });
+    }
+
+    const prognoz = nn.getPrediction(inputData);
+    const response = { data: { fact: prognoz } };
+    console.log(response);
+    res.json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Обучаем сеть при запуске сервера
+try {
+  nn.trainNetwork();
+  nn.saveModel();
+  console.log('Network trained and model saved on startup.');
+
+  // **Проверка нейронной сети через console.log**
+  // const testInput = { plan: 450 };
+  // const testPrediction = nn.getPrediction(testInput);
+  // console.log(`Prediction for plan ${testInput.plan}: ${testPrediction}`);
+
+} catch (error) {
+  console.error('Error during training/testing on startup:', error);
+}
+
 
 // Запускаем сервер
 app.listen(PORT, () => {
