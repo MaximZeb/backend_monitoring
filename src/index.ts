@@ -38,14 +38,15 @@ app.use(bodyParser.json());
 // Подключаем cookie-parser
 app.use(cookieParser());
 
-// Подключение к MongoDB
-mongoose.connect('mongodb://localhost:27017/monitoring', {
+// Подключение к MongoDB password: UQh09PXozhepFBOR maksim
+mongoose.connect('mongodb+srv://maksim:UQh09PXozhepFBOR@monitoring.tjlre3l.mongodb.net/?retryWrites=true&w=majority&appName=Monitoring', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
 .then(() => console.log('Подключено к MongoDB'))
 .catch((err: any) => console.error('Ошибка подключения к MongoDB:', err));
 
+// Метод регистрации
 app.post('/register', async (req: any, res: any) => {
     try {
         const { login, password, name, surname, middleName, position, division } = req.body;
@@ -53,7 +54,7 @@ app.post('/register', async (req: any, res: any) => {
         // Проверяем, существует ли пользователь
         const existingUser = await User.findOne({ login });
         if (existingUser) {
-            return res.status(400).json({ message: 'Пользователь с таким логином уже существует' });
+            return res.status(400).json({ data: { message: 'Пользователь с таким логином уже существует' }});
         }
 
         // Хэшируем пароль
@@ -98,7 +99,7 @@ app.post('/register', async (req: any, res: any) => {
         }});
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Ошибка сервера' });
+        res.status(500).json({data: { message: 'Ошибка сервера' }});
     }
 });
 
@@ -178,13 +179,13 @@ const Month_plan = mongoose.model('Month_plan', monthPlanSchema, 'month_plan');
 const authMiddleware = (req: any, res: any, next: any) => {
   const token = req.cookies.token;
 
-  if (!token) return res.status(401).json({ message: 'Токен отсутствует' });
+  if (!token) return res.status(401).json({data: { message: 'Токен отсутствует' } });
 
   try {
     req.user = jwt.verify(token, SECRET_KEY);
     next();
   } catch {
-    res.status(401).json({ message: 'Недействительный токен' });
+    res.status(401).json({data: { message: 'Недействительный токен' }});
   }
 };
 
@@ -372,7 +373,7 @@ app.post('/predict', (req: any, res: any) => {
     const inputData = req.body;
 
     if (!inputData || typeof inputData.plan !== 'number') {
-      return res.status(400).json({ error: 'Invalid input data. Need {plan: number}' });
+      return res.status(400).json({data: { error: 'Невреный данные. Ожидалось получить {plan: number}' }});
     }
 
     const prognoz = nn.getPrediction(inputData);
@@ -380,7 +381,7 @@ app.post('/predict', (req: any, res: any) => {
     res.json(response);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({data: { error: 'Ошибка сервера' }});
   }
 });
 
@@ -389,11 +390,6 @@ try {
   nn.trainNetwork();
   nn.saveModel();
   console.log('Network trained and model saved on startup.');
-
-  // **Проверка нейронной сети через console.log**
-  // const testInput = { plan: 450 };
-  // const testPrediction = nn.getPrediction(testInput);
-  // console.log(`Prediction for plan ${testInput.plan}: ${testPrediction}`);
 
 } catch (error) {
   console.error('Error during training/testing on startup:', error);
