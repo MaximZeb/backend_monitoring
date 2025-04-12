@@ -2,7 +2,7 @@ FROM node:18-alpine
 
 WORKDIR /app  # Устанавливаем рабочую директорию
 
-COPY package*.json ./  # Копируем package.json и package-lock.json
+COPY package.json ./  # Копируем package.json и package-lock.json
 
 RUN npm install  # Устанавливаем зависимости
 
