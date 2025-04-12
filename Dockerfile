@@ -1,11 +1,19 @@
-FROM node:16.15.0-alpine
+FROM node:18-alpine  # Или ваша нужная версия
 
-WORKDIR /app  # Устанавливаем рабочую директорию
+WORKDIR /app
 
-RUN npm install  # Устанавливаем зависимости
+COPY package*.json ./  # Копируем package.json и package-lock.json (или yarn.lock, pnpm-lock.yaml)
 
-RUN npm run build
+# Чистим кэш npm (полезно, но не всегда необходимо)
+RUN npm cache clean --force
 
-EXPOSE 3000
+# Устанавливаем зависимости
+RUN npm install --production  # Или npm install --only=production, если вам нужны только production dependencies
 
-CMD ["npm", "start"]
+# Если у вас есть скрипт build, выполните его (если не нужно, удалить)
+# COPY . .  # Копируем остальные файлы проекта (после npm install)
+# RUN npm run build
+
+EXPOSE 3000  # Замените 3000 на ваш порт
+
+CMD ["npm", "start"]  # Или yarn start, или ваш скрипт запуска
