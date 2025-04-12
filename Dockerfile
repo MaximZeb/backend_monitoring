@@ -1,12 +1,21 @@
-FROM node:18.20.0
+FROM node:18-alpine
 
 WORKDIR /app
 
-RUN npm cache clean --force
+# Устанавливаем системные зависимости (если необходимо)
+# RUN apk add --no-cache ...
 
-RUN npm install
-RUN npm run build
+COPY package*.json ./
 
-EXPOSE 3000  # Замените 3000 на ваш порт
+RUN npm install --production  # Или npm ci
 
-CMD ["npm", "start"]  # Или yarn start, или ваш скрипт запуска
+COPY . .
+
+# Создаем пользователя (рекомендуется)
+RUN addgroup -g 1001 nodejs
+RUN adduser -S -u 1001 nodejs -G nodejs
+USER nodejs
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
