@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:16.20.0-alpine
 
 WORKDIR /app  # Устанавливаем рабочую директорию
 
