@@ -1,7 +1,5 @@
-FROM node:18.20.8-alpine
+FROM node:16.20.0
 
-WORKDIR /app
+RUN cd /dist
 
-EXPOSE 3000
-
-CMD ["node", "dist/index.js"]
+CMD ["node", "index.js"]
