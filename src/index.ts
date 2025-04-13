@@ -46,6 +46,10 @@ mongoose.connect('mongodb+srv://maksim:UQh09PXozhepFBOR@monitoring.tjlre3l.mongo
 .then(() => console.log('Подключено к MongoDB'))
 .catch((err: any) => console.error('Ошибка подключения к MongoDB:', err));
 
+app.get('/', (req: any, res: any) => {
+  res.send('Привет, мир!'); 
+});
+
 // Метод регистрации
 app.post('/register', async (req: any, res: any) => {
     try {
