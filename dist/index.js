@@ -25,10 +25,11 @@ const User = mongoose.model('User', userSchema);
 nn.loadModel();
 // Подключаем CORS
 app.use(cors({
-    origin: ['http://localhost:4200', 'http://localhost:50777', 'http://localhost:54772', 'http://localhost:62166/'], // Разрешаем запросы только с Angular приложения
+    origin: ['http://localhost:4200', 'http://localhost:50777', 'http://localhost:54772', 'http://localhost:62166', 'http://139.28.223.9'], // Разрешаем запросы только с Angular приложения
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Разрешённые методы
     allowedHeaders: ['Content-Type', 'Authorization'], // Разрешённые заголовки
-    credentials: true // Разрешаем передачу cookies и других credentials
+    credentials: true, // Разрешаем передачу cookies и других credentials
+    sameSite: 'None' // Критично для кросс-доменных запросов!
 }));
 app.use(bodyParser.json());
 // Подключаем cookie-parser
