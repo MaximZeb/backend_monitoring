@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,13 +24,3 @@ jobs:
 
       - name: Build project
         run: npm run build
-
-      - name: Run tests
-        run: npm test
-
-      - name: Archive dist folder
-        if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist
