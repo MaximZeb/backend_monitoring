@@ -1,26 +1,37 @@
-name: CI Build
+name: Deploy if dist exists
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Check if dist exists
+        id: check_dist
+        run: |
+          if [ -d "./dist" ] && [ "$(ls -A ./dist)" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop here if no dist
+        if: steps.check_dist.outputs.exists == 'false'
+        run: |
+          echo "❌ dist/ not found. Skipping deploy."
+          exit 1
+
+      - name: Deploy dist via SCP
+        uses: appleboy/scp-action@v0.1.4
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "dist/*"
+          target: "/path/on/server"
